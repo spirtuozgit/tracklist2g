@@ -7,8 +7,6 @@ const commentEl = document.getElementById("song-comment");
 const textEl = document.getElementById("song-text");
 
 const backBtn = document.getElementById("back-btn");
-const addBtn = document.getElementById("add-btn");
-const playedBtn = document.getElementById("played-btn");
 
 const zoomInBtn = document.getElementById("zoom-in");
 const zoomOutBtn = document.getElementById("zoom-out");
@@ -22,7 +20,7 @@ let scrollInterval = null;
 
 const currentSong = localStorage.getItem("currentSong");
 
-/* ------- Загрузка песни -------- */
+/* Загрузка песни */
 async function loadSong() {
     if (!currentSong) return;
 
@@ -33,11 +31,10 @@ async function loadSong() {
     titleEl.textContent = (lines[0] || "").trim();
     keyEl.textContent = (lines[1] || "").trim();
     commentEl.textContent = (lines[2] || "").trim();
-
     textEl.innerHTML = lines.slice(3).join("\n").replace(/\n/g, "<br>");
 }
 
-/* ------- ZOOM -------- */
+/* ZOOM */
 zoomInBtn.onclick = () => {
     fontSize += 1;
     textEl.style.fontSize = fontSize + "px";
@@ -48,7 +45,7 @@ zoomOutBtn.onclick = () => {
     textEl.style.fontSize = fontSize + "px";
 };
 
-/* ------- AUTO SCROLL -------- */
+/* AUTO SCROLL */
 function stopScroll() {
     clearInterval(scrollInterval);
     scrollInterval = null;
@@ -63,10 +60,12 @@ scrollStartBtn.onclick = () => {
 
 scrollStopBtn.onclick = stopScroll;
 
-/* ------- Навигация -------- */
-backBtn.onclick = () => history.back();
+/* КНОПКА НАЗАД — ВОЗВРАТ НА НУЖНУЮ ВКЛАДКУ */
+backBtn.onclick = () => {
+    window.location.href = "index.html";
+};
 
-/* ------- Запуск -------- */
+/* ЗАПУСК */
 window.onload = () => {
     textEl.style.fontSize = fontSize + "px";
     loadSong();

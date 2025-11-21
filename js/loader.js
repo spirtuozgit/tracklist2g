@@ -12,9 +12,9 @@ const refreshBtn = document.getElementById("refresh-btn");
 /* --- Утилита: очистка строки --- */
 function cleanTitle(line) {
     return line
-        .replace(/^\uFEFF/, "")  // убрать BOM
-        .replace(/^\\/, "")      // убрать слеш
-        .replace(/^#/, "")       // убрать #
+        .replace(/^\uFEFF/, "")
+        .replace(/^\\/, "")
+        .replace(/^#/, "")
         .trim();
 }
 
@@ -96,6 +96,7 @@ function renderCatalog(songs) {
         /* открыть */
         div.querySelector(".open-btn").onclick = () => {
             localStorage.setItem("currentSong", song.filename);
+            localStorage.setItem("returnTo", "catalog");     // ← ВАЖНО
             window.location.href = "song.html";
         };
 
@@ -116,42 +117,33 @@ function renderCatalog(songs) {
     });
 }
 
-/* --- Переключение вкладок + АВТО-ОБНОВЛЕНИЕ --- */
+/* --- Переключение вкладок --- */
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.onclick = () => {
-
-        // активные кнопки
         document.querySelectorAll(".tab-btn")
             .forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
-        // переключение вкладок
         document.querySelectorAll(".tab")
             .forEach(tab => tab.classList.remove("active"));
         document.getElementById(btn.dataset.tab).classList.add("active");
 
-        // 🔥 обновление содержимого
         if (btn.dataset.tab === "catalog") {
-            loadCatalog();              // обновить каталог
+            loadCatalog();
+            localStorage.setItem("returnTo", "catalog");
         }
 
         if (btn.dataset.tab === "tracklist") {
             if (typeof renderTracklist === "function") {
-                renderTracklist();      // обновить треклист
+                renderTracklist();
+                localStorage.setItem("returnTo", "tracklist");
             }
         }
     };
 });
 
-/* --- Кнопка обновления --- */
+/* --- Обновление --- */
 refreshBtn.onclick = () => loadCatalog();
 
 /* --- Запуск --- */
-window.onload = () => {
-    setTimeout(() => {
-        const splash = document.getElementById("splash");
-        if (splash) splash.style.display = "none";
-    }, 500);
-
-    loadCatalog();  // начальная загрузка
-};
+window.onload = () => loadCatalog();

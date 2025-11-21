@@ -1,10 +1,5 @@
 /* ============================================
    2G+ Tracklist — FINISH VERSION
-   - Открыть
-   - +
-   - -
-   - Серый стиль для сыгранных
-   - Перетаскивание (Drag & Drop)
    ============================================ */
 
 const tracklistContainer = document.getElementById("tracklist-container");
@@ -37,11 +32,11 @@ function togglePlayed(name) {
     localStorage.setItem("played", JSON.stringify(played));
 }
 
-/* ---------- DRAG & DROP ---------- */
+/* DRAG & DROP */
 
 let dragIndex = null;
 
-function enableDragAndDrop(listItems, filenames) {
+function enableDragAndDrop(listItems) {
     listItems.forEach((item, index) => {
         item.setAttribute("draggable", "true");
 
@@ -70,7 +65,6 @@ function enableDragAndDrop(listItems, filenames) {
                     tracklistContainer.insertBefore(draggingItem, item);
                 }
 
-                // обновляем порядок
                 items = Array.from(tracklistContainer.children);
                 const newOrder = items.map(el => el.dataset.filename);
                 saveTracklist(newOrder);
@@ -79,11 +73,11 @@ function enableDragAndDrop(listItems, filenames) {
     });
 }
 
-/* ---------- Рендер ---------- */
+/* РЕНДЕР */
 
 async function renderTracklist() {
     const list = getTracklist();
-    const played = JSON.parse(localStorage.getItem("played") || "[]");
+    const played = JSON.parse(localStorage.getItem("played") || "[]" );
 
     tracklistContainer.innerHTML = "";
 
@@ -115,21 +109,24 @@ async function renderTracklist() {
             <button class="remove-btn">-</button>
         `;
 
-        // открыть
+        /* открыть */
         div.querySelector(".open-btn").onclick = () => {
             localStorage.setItem("currentSong", filename);
+            localStorage.setItem("returnTo", "tracklist");   // ← ВАЖНО
             window.location.href = "song.html";
         };
 
-        // сыграно
+        /* сыграно */
         div.querySelector(".played-btn").onclick = () => {
             togglePlayed(filename);
             renderTracklist();
         };
 
-        // удалить из треклиста
+        /* удалить */
         div.querySelector(".remove-btn").onclick = () => {
-            saveTracklist(getTracklist().filter(x => x !== filename));
+            saveTracklist(
+                getTracklist().filter(x => x !== filename)
+            );
             renderTracklist();
         };
 
@@ -137,8 +134,7 @@ async function renderTracklist() {
         elements.push(div);
     }
 
-    // включить перетаскивание
-    enableDragAndDrop(elements, list);
+    enableDragAndDrop(elements);
 }
 
 document.querySelector('[data-tab="tracklist"]').addEventListener("click", () => {

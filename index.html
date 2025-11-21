@@ -28,5 +28,18 @@
     <div id="tracklist-container" class="list"></div>
 </section>
 
+<script>
+/* Автоматическое открытие нужной вкладки */
+window.addEventListener("DOMContentLoaded", () => {
+    const tab = localStorage.getItem("returnTo");
+
+    if (tab === "tracklist") {
+        document.querySelector('.tab-btn[data-tab="tracklist"]').click();
+    } else {
+        document.querySelector('.tab-btn[data-tab="catalog"]').click();
+    }
+});
+</script>
+
 </body>
 </html>
