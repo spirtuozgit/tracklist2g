@@ -1,5 +1,5 @@
 /* ============================================
-   2G+ Tracklist — LOADER (исправленная версия)
+   2G+ Tracklist — LOADER (финальная версия)
    ============================================ */
 
 const GITHUB_USER = "spirtuozgit";
@@ -9,46 +9,50 @@ const BRANCH = "main";
 const songList = document.getElementById("song-list");
 const refreshBtn = document.getElementById("refresh-btn");
 
-/* ------- Получение всех md-файлов из /songs -------- */
+/* --- Утилита: очистка строки --- */
+function cleanTitle(line) {
+    return line
+        .replace(/^\uFEFF/, "")  // убрать BOM
+        .replace(/^\\/, "")      // убрать слеш
+        .replace(/^#/, "")       // убрать #
+        .trim();
+}
+
+/* --- Получить список md файлов --- */
 async function fetchSongFiles() {
     const url = `https://api.github.com/repos/${GITHUB_USER}/${REPO}/contents/songs?ref=${BRANCH}`;
     const list = await fetch(url).then(r => r.json());
 
     if (!Array.isArray(list)) throw new Error("GitHub API error");
 
-    return list.filter(f => f.name.endsWith(".md")).map(f => ({
-        name: f.name,
-        download_url: f.download_url
-    }));
+    return list
+        .filter(f => f.name.endsWith(".md"))
+        .map(f => ({
+            name: f.name,
+            download_url: f.download_url
+        }));
 }
 
-/* ------- Загрузка одного md файла -------- */
+/* --- Подгрузить метаданные песни --- */
 async function loadSongMeta(file) {
     const raw = await fetch(file.download_url).then(r => r.text());
     const lines = raw.split("\n");
 
-    // удаляем BOM
-    lines[0] = lines[0].replace("\uFEFF", "");
-
-    const title = lines[0].replace("#", "").trim();
+    const title = cleanTitle(lines[0] || "");
     const key = (lines[1] || "").trim();
-    let comment = (lines[2] || "").trim();
 
-    comment = comment
-        .replace("(Комментарий:", "")
-        .replace(")", "")
-        .trim();
+    let comment = (lines[2] || "").trim();
+    comment = comment.replace("(Комментарий:", "").replace(")", "").trim();
 
     return {
         title,
         key,
         comment,
-        filename: file.name,
-        path: "songs/" + file.name
+        filename: file.name
     };
 }
 
-/* ------- Основная загрузка каталога -------- */
+/* --- Загрузить каталог --- */
 async function loadCatalog() {
     songList.innerHTML = "<div style='padding:10px;'>Загрузка...</div>";
 
@@ -68,7 +72,7 @@ async function loadCatalog() {
     }
 }
 
-/* ------- Рендер каталога -------- */
+/* --- Рендер каталога --- */
 function renderCatalog(songs) {
     songList.innerHTML = "";
 
@@ -78,7 +82,6 @@ function renderCatalog(songs) {
         const div = document.createElement("div");
         div.className = "song-item";
 
-        // если песня в треклисте
         if (tracklist.includes(song.filename)) {
             div.classList.add("added");
         }
@@ -87,61 +90,68 @@ function renderCatalog(songs) {
             <b>${song.title}</b><br>
             <small>${song.key}</small><br>
             <button class="open-btn">Открыть</button>
-            <button class="add-btn">${tracklist.includes(song.filename) ? "Убрать" : "Добавить"}</button>
+            <button class="add-btn">${tracklist.includes(song.filename) ? "-" : "+"}</button>
         `;
 
-        // открыть песню
+        /* открыть */
         div.querySelector(".open-btn").onclick = () => {
             localStorage.setItem("currentSong", song.filename);
             window.location.href = "song.html";
         };
 
-        // добавить/убрать
+        /* добавить или убрать */
         div.querySelector(".add-btn").onclick = () => {
-            toggleTrack(song.filename);
-            loadCatalog(); 
+            let t = JSON.parse(localStorage.getItem("tracklist") || "[]");
+
+            if (t.includes(song.filename))
+                t = t.filter(x => x !== song.filename);
+            else
+                t.push(song.filename);
+
+            localStorage.setItem("tracklist", JSON.stringify(t));
+            loadCatalog();
         };
 
         songList.appendChild(div);
     });
 }
 
-/* ------- Добавить / убрать из треклиста -------- */
-function toggleTrack(name) {
-    let t = JSON.parse(localStorage.getItem("tracklist") || "[]");
-
-    if (t.includes(name)) {
-        t = t.filter(x => x !== name);
-    } else {
-        t.push(name);
-    }
-
-    localStorage.setItem("tracklist", JSON.stringify(t));
-}
-
-/* ------- Переключение вкладок -------- */
+/* --- Переключение вкладок + АВТО-ОБНОВЛЕНИЕ --- */
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.onclick = () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+        // активные кнопки
+        document.querySelectorAll(".tab-btn")
+            .forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
-        document.querySelectorAll(".tab").forEach(tab =>
-            tab.classList.remove("active")
-        );
-
+        // переключение вкладок
+        document.querySelectorAll(".tab")
+            .forEach(tab => tab.classList.remove("active"));
         document.getElementById(btn.dataset.tab).classList.add("active");
+
+        // 🔥 обновление содержимого
+        if (btn.dataset.tab === "catalog") {
+            loadCatalog();              // обновить каталог
+        }
+
+        if (btn.dataset.tab === "tracklist") {
+            if (typeof renderTracklist === "function") {
+                renderTracklist();      // обновить треклист
+            }
+        }
     };
 });
 
-/* ------- Обновить каталог -------- */
+/* --- Кнопка обновления --- */
 refreshBtn.onclick = () => loadCatalog();
 
-/* ------- Запуск -------- */
+/* --- Запуск --- */
 window.onload = () => {
     setTimeout(() => {
         const splash = document.getElementById("splash");
         if (splash) splash.style.display = "none";
-    }, 1200);
+    }, 500);
 
-    loadCatalog();
+    loadCatalog();  // начальная загрузка
 };

@@ -2,34 +2,40 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>2G+ — Песня</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2G+ — Песня</title>
 
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css">
     <script defer src="js/viewer.js"></script>
 </head>
 
 <body>
 
-<header>
-    <button id="back-btn">← Назад</button>
-    <button id="add-btn">Добавить в треклист</button>
-    <button id="played-btn">Сыграно</button>
+<header id="song-header">
+    <button id="back-btn">Назад</button>
+
+    <div class="song-tools">
+        <button id="zoom-out">A−</button>
+        <button id="zoom-in">A+</button>
+
+        <button id="scroll-start">▶</button>
+        <button id="scroll-stop">⏸</button>
+
+        <input type="range" id="scroll-speed" min="1" max="10" value="1">
+    </div>
+
+    <div class="song-actions">
+        <button id="add-btn">Добавить в треклист</button>
+        <button id="played-btn">Сыграно</button>
+    </div>
 </header>
 
-<main id="song-view" style="padding: 15px;">
-    <h2 id="song-title" style="margin-bottom: 5px;"></h2>
-    <div id="song-key" style="opacity:0.6; margin-bottom:8px;"></div>
-    <div id="song-comment" style="opacity:0.6; margin-bottom:15px;"></div>
-    <div id="song-text" class="song-body" style="line-height: 1.5;"></div>
+<main id="song-view">
+    <h2 id="song-title"></h2>
+    <div id="song-key"></div>
+    <div id="song-comment"></div>
+    <div id="song-text"></div>
 </main>
-
-<!-- Service Worker -->
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-}
-</script>
 
 </body>
 </html>

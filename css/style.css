@@ -1,94 +1,240 @@
-/* ====== GLOBAL ====== */
+/* ============================================
+   2G+ Tracklist — FULL COMPACT DARK THEME CSS
+   ============================================ */
+
+/* ---------- BASE ---------- */
+
 body {
+    background: #111;
+    color: #eee;
     margin: 0;
-    padding: 0;
-    background: #0e0e0e;
-    color: #f2f2f2;
     font-family: Arial, sans-serif;
     user-select: none;
 }
 
-h1, h2, h3 {
-    margin: 0;
-    padding: 0;
+button {
+    cursor: pointer;
 }
 
-/* ====== SPLASH ====== */
-#splash {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    color: #fff;
+/* ============================================
+      TOP NAVIGATION (Каталог / Треклист)
+   ============================================ */
+
+header.topnav {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 60px;
-    font-weight: bold;
-    z-index: 10;
-    animation: fadeout 1.2s forwards;
-    animation-delay: 0.8s;
+    background: #2b2b2b;
+    padding: 6px;
+    gap: 6px;
+    border-bottom: 1px solid #444;
 }
 
-@keyframes fadeout {
-    to { opacity: 0; visibility: hidden; }
-}
-
-/* ====== HEADER ====== */
-header {
-    display: flex;
-    background: #1b1b1b;
-    border-bottom: 1px solid #333;
-    padding: 10px;
-    gap: 10px;
-}
-
-header button {
+header.topnav button {
     flex: 1;
-    padding: 10px;
-    border: none;
-    background: #333;
+    background: #444;
     color: #eee;
-    font-size: 16px;
-    border-radius: 6px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
 }
 
-header button.active {
-    background: #555;
+header.topnav button.active {
+    background: #666;
 }
 
 #refresh-btn {
-    flex: 0 0 50px;
-    font-size: 20px;
+    width: 48px;
 }
 
-/* ====== TABS ====== */
-.tab { display: none; }
-.tab.active { display: block; }
+/* ---------- TABS ---------- */
 
-/* ====== LISTS ====== */
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}
+
 .list {
     padding: 10px;
 }
 
-.song-item, .track-item {
-    padding: 12px;
-    background: #1d1d1d;
+/* ============================================
+          SONG / TRACK ITEM (карточки)
+   ============================================ */
+
+.song-item,
+.track-item {
+    background: #1b1b1b;
     border: 1px solid #333;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.song-item:hover,
+.track-item:hover {
+    background: #1f1f1f;
+}
+
+.song-item.added {
+    background: #1e2333;
+    border-color: #5a7fff;
+}
+
+.song-item b,
+.track-item b {
+    font-size: 16px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.song-item button,
+.track-item button {
+    background: #333;
+    color: #eee;
+    border: 1px solid #555;
+    padding: 4px 10px;
+    font-size: 13px;
+    margin-right: 4px;
+    margin-top: 4px;
     border-radius: 6px;
-    margin-bottom: 12px;
 }
 
-.song-item:hover, .track-item:hover {
-    background: #2b2b2b;
-}
-
-/* "добавлено в треклист" */
-.added {
-    border-color: #4caf50;
-    background: #1f3320;
-}
-
-/* "сыграно" */
-.played {
+.track-item.played {
     opacity: 0.4;
+}
+
+/* ---------- DRAG & DROP ---------- */
+
+.track-item.dragging {
+    opacity: 0.3 !important;
+    border: 1px dashed #888;
+}
+
+.track-item {
+    transition: transform 0.15s ease;
+}
+
+/* ============================================
+                   SPLASH
+   ============================================ */
+
+#splash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+}
+
+#splash h1 {
+    color: #fff;
+    font-size: 42px;
+}
+
+/* ============================================
+                   SONG PAGE
+   ============================================ */
+
+#song-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* фиксированная верхняя панель */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: #2b2b2b;
+    padding: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #444;
+}
+
+#song-header button {
+    background: #444;
+    color: #eee;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Панель инструментов A+/A−, автоскролл */
+.song-tools {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    background: #222;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.song-tools button {
+    background: #333;
+    border: 1px solid #555;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.song-tools input[type="range"] {
+    width: 90px;
+}
+
+/* Кнопки Добавить / Сыграно */
+.song-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.song-actions button {
+    background: #444;
+    border: 1px solid #666;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* Текст песни */
+#song-view {
+    padding: 12px;
+}
+
+#song-title {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+#song-key,
+#song-comment {
+    opacity: 0.6;
+    margin-bottom: 10px;
+}
+
+#song-text {
+    font-size: 17px;
+    white-space: pre-wrap;
+    line-height: 1.45;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 500px) {
+    header.topnav button {
+        padding: 6px;
+        font-size: 13px;
+    }
+
+    #song-title {
+        font-size: 22px;
+    }
+
+    #song-text {
+        font-size: 16px;
+    }
 }
