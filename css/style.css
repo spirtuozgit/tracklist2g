@@ -254,7 +254,7 @@ track-item.played {
     }
 
     #song-text {
-        font-size: 13px !important;
-        line-height: 1.06 !important;
+        font-size: 15px !important;
+        line-height: 0.55 !important;
     }
 }
