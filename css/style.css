@@ -103,7 +103,7 @@ header.topnav button.active {
     border-radius: 6px;
 }
 
-.track-item.played {
+track-item.played {
     opacity: 0.4;
 }
 
@@ -134,7 +134,7 @@ header.topnav button.active {
 
 #splash h1 {
     color: #fff;
-    font-size: 36px;
+    font-size: 34px;
 }
 
 /* ============================================
@@ -145,15 +145,11 @@ header.topnav button.active {
     display: flex;
     flex-direction: column;
     gap: 6px;
-
-    /* фиксированная верхняя панель */
     position: sticky;
     top: 0;
     z-index: 1000;
-
     background: #2b2b2b;
     padding: 8px;
-    padding-bottom: 10px;
     border-bottom: 1px solid #444;
 }
 
@@ -166,7 +162,7 @@ header.topnav button.active {
     font-size: 13px;
 }
 
-/* Панель инструментов A+/A−, автоскролл */
+/* Панель инструментов */
 .song-tools {
     display: flex;
     gap: 4px;
@@ -208,7 +204,7 @@ header.topnav button.active {
 }
 
 #song-title {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 4px;
 }
 
@@ -216,23 +212,26 @@ header.topnav button.active {
 #song-comment {
     opacity: 0.6;
     margin-bottom: 6px;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-/* ⬇⬇⬇ УЛЬТРА-КОМПАКТНЫЙ ТЕКСТ ПЕСНИ ⬇⬇⬇ */
+/* ================================
+   ULTRA COMPACT SONG TEXT
+   ================================ */
 
 #song-text {
-    font-size: 15px;
+    font-size: 13.5px !important;
     white-space: pre-wrap;
-    line-height: 1.12 !important;
-    margin: 0;
-    padding: 0;
+    line-height: 1.06 !important;
+    letter-spacing: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 #song-text p {
     margin: 0 !important;
     padding: 0 !important;
-    line-height: 1.12 !important;
+    line-height: 1.06 !important;
 }
 
 #song-text br {
@@ -251,11 +250,11 @@ header.topnav button.active {
     }
 
     #song-title {
-        font-size: 18px;
+        font-size: 17px;
     }
 
     #song-text {
-        font-size: 14px;
-        line-height: 1.12 !important;
+        font-size: 13px !important;
+        line-height: 1.06 !important;
     }
 }
