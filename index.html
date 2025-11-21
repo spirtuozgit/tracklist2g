@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>2G+ Tracklist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/loader.js"></script>
+    <script defer src="js/tracklist.js"></script>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+    <h1>2G+</h1>
+</div>
+
+<!-- HEADER -->
+<header>
+    <button class="tab-btn active" data-tab="catalog">Каталог</button>
+    <button class="tab-btn" data-tab="tracklist">Треклист</button>
+    <button id="refresh-btn">↻</button>
+</header>
+
+<!-- MAIN CONTENT -->
+<main>
+
+    <!-- КАТАЛОГ -->
+    <section id="catalog" class="tab active">
+        <div id="song-list" class="list"></div>
+    </section>
+
+    <!-- ТРЕКЛИСТ -->
+    <section id="tracklist" class="tab">
+        <div id="tracklist-container" class="list"></div>
+    </section>
+
+</main>
+
+</body>
+</html>
