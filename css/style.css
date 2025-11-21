@@ -1,5 +1,5 @@
 /* ============================================
-   2G+ Tracklist — ULTRA COMPACT DARK THEME CSS
+   2G+ Tracklist — DARK THEME CSS
    ============================================ */
 
 /* ---------- BASE ---------- */
@@ -48,20 +48,15 @@ header.topnav button.active {
 
 /* ---------- TABS ---------- */
 
-.tab {
-    display: none;
-}
-
-.tab.active {
-    display: block;
-}
+.tab { display: none; }
+.tab.active { display: block; }
 
 .list {
     padding: 8px;
 }
 
 /* ============================================
-          SONG / TRACK ITEM (карточки)
+          SONG / TRACK ITEM
    ============================================ */
 
 .song-item,
@@ -103,12 +98,11 @@ header.topnav button.active {
     border-radius: 6px;
 }
 
-track-item.played {
+.track-item.played {
     opacity: 0.4;
 }
 
-/* ---------- DRAG & DROP ---------- */
-
+/* Drag */
 .track-item.dragging {
     opacity: 0.3 !important;
     border: 1px dashed #888;
@@ -116,25 +110,6 @@ track-item.played {
 
 .track-item {
     transition: transform 0.15s ease;
-}
-
-/* ============================================
-                   SPLASH
-   ============================================ */
-
-#splash {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 500;
-}
-
-#splash h1 {
-    color: #fff;
-    font-size: 34px;
 }
 
 /* ============================================
@@ -153,16 +128,6 @@ track-item.played {
     border-bottom: 1px solid #444;
 }
 
-#song-header button {
-    background: #444;
-    color: #eee;
-    border: none;
-    padding: 6px;
-    border-radius: 6px;
-    font-size: 13px;
-}
-
-/* Панель инструментов */
 .song-tools {
     display: flex;
     gap: 4px;
@@ -172,89 +137,46 @@ track-item.played {
     border-radius: 6px;
 }
 
-.song-tools button {
-    background: #333;
-    border: 1px solid #555;
-    padding: 3px 6px;
-    border-radius: 6px;
-    font-size: 12px;
-}
-
-.song-tools input[type="range"] {
-    width: 80px;
-}
-
-/* Кнопки Добавить / Сыграно */
 .song-actions {
     display: flex;
     gap: 6px;
 }
 
-.song-actions button {
-    background: #444;
-    border: 1px solid #666;
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 13px;
-}
+#song-view { padding: 10px; }
 
-/* Текст песни */
-#song-view {
-    padding: 10px;
-}
+#song-title { font-size: 18px; margin-bottom: 4px; }
+#song-key, #song-comment { opacity: 0.6; margin-bottom: 6px; font-size: 13px; }
 
-#song-title {
-    font-size: 18px;
-    margin-bottom: 4px;
-}
-
-#song-key,
-#song-comment {
-    opacity: 0.6;
-    margin-bottom: 6px;
-    font-size: 13px;
-}
-
-/* ================================
-   ULTRA COMPACT SONG TEXT
-   ================================ */
+/* ============================================
+   *** FIXED COMPACT SONG TEXT (0.65) ***
+   ============================================ */
 
 #song-text {
-    font-size: 13.5px !important;
     white-space: pre-wrap;
-    line-height: 1.06 !important;
-    letter-spacing: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
+
+    font-size: 14px;
+    line-height: 0.65;
 }
 
 #song-text p {
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1.06 !important;
+    margin: 0;
+    padding: 0;
+    line-height: 0.65;
 }
 
 #song-text br {
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
     display: block;
+    margin: 0;
+    padding: 0;
+    line-height: 0.65;
 }
 
-/* ---------- MOBILE ---------- */
-
+/* Mobile */
 @media (max-width: 500px) {
-    header.topnav button {
-        padding: 4px;
-        font-size: 12px;
-    }
-
-    #song-title {
-        font-size: 17px;
-    }
-
     #song-text {
-        font-size: 15px !important;
-        line-height: 0.55 !important;
+        font-size: 14px;
+        line-height: 0.65;
     }
 }
