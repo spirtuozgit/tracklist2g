@@ -1,5 +1,6 @@
 /* ============================================
-   2G+ Tracklist — VIEWER (финальная версия)
+   2G+ Song Viewer — Zoom + AutoScroll + Tracklist
+   (улучшенная версия на основе твоего файла)
    ============================================ */
 
 const GITHUB_USER = "spirtuozgit";
@@ -15,6 +16,18 @@ const backBtn = document.getElementById("back-btn");
 const addBtn = document.getElementById("add-btn");
 const playedBtn = document.getElementById("played-btn");
 
+// NEW — Zoom buttons
+const zoomInBtn = document.getElementById("zoom-in");
+const zoomOutBtn = document.getElementById("zoom-out");
+
+// NEW — Autoscroll
+const scrollStartBtn = document.getElementById("scroll-start");
+const scrollStopBtn = document.getElementById("scroll-stop");
+const scrollSpeedInput = document.getElementById("scroll-speed");
+
+let fontSize = 18;
+let scrollInterval = null;
+
 /* ------- Получение имени файла текущей песни -------- */
 const currentSong = localStorage.getItem("currentSong");
 
@@ -22,53 +35,47 @@ if (!currentSong) {
     textEl.innerHTML = "<p style='color:#f55;'>Песня не найдена</p>";
 }
 
-/* ------- Очистка заголовка от мусора -------- */
+/* ------- Очистка заголовка -------- */
 function cleanTitle(line) {
     return line
-        .replace(/^\uFEFF/, "")   // убираем BOM
-        .replace(/^\\/, "")       // убираем начальный слеш
-        .replace(/^#/, "")        // убираем #
+        .replace(/^\uFEFF/, "")
+        .replace(/^\\/, "")
+        .replace(/^#/, "")
         .trim();
 }
 
-/* ------- Загрузка .md файла -------- */
+/* ------- Загрузка Markdown песни -------- */
 async function loadSong() {
     const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO}/main/songs/${currentSong}`;
-
     const raw = await fetch(url).then(r => r.text());
     const lines = raw.split("\n");
 
-    // Чистим и читаем заголовочные строки
     const title = cleanTitle(lines[0] || "");
     const key = (lines[1] || "").trim();
-
     let comment = (lines[2] || "").trim();
-    comment = comment
-        .replace("(Комментарий:", "")
-        .replace(")", "")
-        .trim();
 
-    // основной текст песни
-    const bodyLines = lines.slice(3).join("\n");
+    comment = comment.replace("(Комментарий:", "").replace(")", "").trim();
+
+    const body = lines.slice(3).join("\n");
 
     titleEl.textContent = title;
     keyEl.textContent = key;
     commentEl.textContent = comment;
 
-    // md → html (очень простой вывод)
-    textEl.innerHTML = bodyLines
+    // Простейший Markdown → HTML
+    textEl.innerHTML = body
         .replace(/\n/g, "<br>")
         .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
 
     updateButtons();
 }
 
-/* ------- Обновление кнопок -------- */
+/* ------- Обновление кнопок "Добавить / Сыграно" -------- */
 function updateButtons() {
     let tracklist = JSON.parse(localStorage.getItem("tracklist") || "[]");
     let played = JSON.parse(localStorage.getItem("played") || "[]");
 
-    // Добавить / убрать
+    // кнопка добавления
     if (tracklist.includes(currentSong)) {
         addBtn.textContent = "Убрать из треклиста";
         addBtn.classList.add("in-list");
@@ -77,7 +84,7 @@ function updateButtons() {
         addBtn.classList.remove("in-list");
     }
 
-    // Сыграно / не сыграно
+    // кнопка сыграно
     if (played.includes(currentSong)) {
         playedBtn.textContent = "Не сыграно";
         playedBtn.classList.add("is-played");
@@ -87,31 +94,31 @@ function updateButtons() {
     }
 }
 
-/* ------- Добавить/убрать из треклиста -------- */
+/* ------- Добавить / убрать из треклиста -------- */
 addBtn.onclick = () => {
-    let t = JSON.parse(localStorage.getItem("tracklist") || "[]");
+    let list = JSON.parse(localStorage.getItem("tracklist") || "[]");
 
-    if (t.includes(currentSong)) {
-        t = t.filter(x => x !== currentSong);
+    if (list.includes(currentSong)) {
+        list = list.filter(x => x !== currentSong);
     } else {
-        t.push(currentSong);
+        list.push(currentSong);
     }
 
-    localStorage.setItem("tracklist", JSON.stringify(t));
+    localStorage.setItem("tracklist", JSON.stringify(list));
     updateButtons();
 };
 
 /* ------- Сыграно -------- */
 playedBtn.onclick = () => {
-    let p = JSON.parse(localStorage.getItem("played") || "[]");
+    let played = JSON.parse(localStorage.getItem("played") || "[]");
 
-    if (p.includes(currentSong)) {
-        p = p.filter(x => x !== currentSong);
+    if (played.includes(currentSong)) {
+        played = played.filter(x => x !== currentSong);
     } else {
-        p.push(currentSong);
+        played.push(currentSong);
     }
 
-    localStorage.setItem("played", JSON.stringify(p));
+    localStorage.setItem("played", JSON.stringify(played));
     updateButtons();
 };
 
@@ -120,5 +127,51 @@ backBtn.onclick = () => {
     window.location.href = "index.html";
 };
 
-/* ------- Старт -------- */
-loadSong();
+/* ============================================
+   ZOOM (A+ / A−)
+   ============================================ */
+
+zoomInBtn.onclick = () => {
+    fontSize += 2;
+    textEl.style.fontSize = fontSize + "px";
+};
+
+zoomOutBtn.onclick = () => {
+    fontSize = Math.max(10, fontSize - 2);
+    textEl.style.fontSize = fontSize + "px";
+};
+
+/* ============================================
+   AUTO SCROLL (Старт / Стоп + скорость)
+   ============================================ */
+
+function stopScroll() {
+    if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+    }
+}
+
+scrollStartBtn.onclick = () => {
+    stopScroll();
+
+    const speed = Number(scrollSpeedInput.value); // px per tick
+    const interval = 80; // ms
+
+    scrollInterval = setInterval(() => {
+        window.scrollBy(0, speed);
+
+        // Остановка в конце страницы
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 2) {
+            stopScroll();
+        }
+    }, interval);
+};
+
+scrollStopBtn.onclick = stopScroll;
+
+/* ------- Запуск -------- */
+window.onload = () => {
+    textEl.style.fontSize = fontSize + "px";
+    loadSong();
+};
