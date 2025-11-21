@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>2G+ — Песня</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
     <script defer src="js/viewer.js"></script>
 </head>
 
@@ -17,12 +17,19 @@
     <button id="played-btn">Сыграно</button>
 </header>
 
-<main id="song-view">
-    <h2 id="song-title"></h2>
+<main id="song-view" style="padding: 15px;">
+    <h2 id="song-title" style="margin-bottom: 5px;"></h2>
     <div id="song-key" style="opacity:0.6; margin-bottom:8px;"></div>
     <div id="song-comment" style="opacity:0.6; margin-bottom:15px;"></div>
-    <div id="song-text" class="song-body"></div>
+    <div id="song-text" class="song-body" style="line-height: 1.5;"></div>
 </main>
+
+<!-- Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js");
+}
+</script>
 
 </body>
 </html>

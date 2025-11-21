@@ -1,6 +1,5 @@
 /* ============================================
-   2G+ Tracklist — LOADER
-   Автоматическая загрузка песен из GitHub /songs
+   2G+ Tracklist — LOADER (исправленная версия)
    ============================================ */
 
 const GITHUB_USER = "spirtuozgit";
@@ -15,6 +14,8 @@ async function fetchSongFiles() {
     const url = `https://api.github.com/repos/${GITHUB_USER}/${REPO}/contents/songs?ref=${BRANCH}`;
     const list = await fetch(url).then(r => r.json());
 
+    if (!Array.isArray(list)) throw new Error("GitHub API error");
+
     return list.filter(f => f.name.endsWith(".md")).map(f => ({
         name: f.name,
         download_url: f.download_url
@@ -26,14 +27,17 @@ async function loadSongMeta(file) {
     const raw = await fetch(file.download_url).then(r => r.text());
     const lines = raw.split("\n");
 
+    // удаляем BOM
+    lines[0] = lines[0].replace("\uFEFF", "");
+
     const title = lines[0].replace("#", "").trim();
     const key = (lines[1] || "").trim();
     let comment = (lines[2] || "").trim();
 
-    // Убираем (Комментарий: ...)
-    comment = comment.replace("(Комментарий:", "")
-                     .replace(")", "")
-                     .trim();
+    comment = comment
+        .replace("(Комментарий:", "")
+        .replace(")", "")
+        .trim();
 
     return {
         title,
@@ -64,7 +68,7 @@ async function loadCatalog() {
     }
 }
 
-/* ------- Рисуем каталог -------- */
+/* ------- Рендер каталога -------- */
 function renderCatalog(songs) {
     songList.innerHTML = "";
 
@@ -74,7 +78,7 @@ function renderCatalog(songs) {
         const div = document.createElement("div");
         div.className = "song-item";
 
-        // Пометка если в треклисте
+        // если песня в треклисте
         if (tracklist.includes(song.filename)) {
             div.classList.add("added");
         }
@@ -92,17 +96,17 @@ function renderCatalog(songs) {
             window.location.href = "song.html";
         };
 
-        // добавить/убрать из треклиста
+        // добавить/убрать
         div.querySelector(".add-btn").onclick = () => {
             toggleTrack(song.filename);
-            loadCatalog(); // перерисовать
+            loadCatalog(); 
         };
 
         songList.appendChild(div);
     });
 }
 
-/* ------- Добавить / Удалить из треклиста -------- */
+/* ------- Добавить / убрать из треклиста -------- */
 function toggleTrack(name) {
     let t = JSON.parse(localStorage.getItem("tracklist") || "[]");
 
@@ -129,13 +133,14 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     };
 });
 
-/* ------- Кнопка обновления -------- */
+/* ------- Обновить каталог -------- */
 refreshBtn.onclick = () => loadCatalog();
 
 /* ------- Запуск -------- */
 window.onload = () => {
     setTimeout(() => {
-        document.getElementById("splash").style.display = "none";
+        const splash = document.getElementById("splash");
+        if (splash) splash.style.display = "none";
     }, 1200);
 
     loadCatalog();
